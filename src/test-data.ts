@@ -7,3 +7,5 @@ export const dummyGetResponse = {
     },
   ],
 }
+
+export const dummyApiKey = 'dummy-api-key'
