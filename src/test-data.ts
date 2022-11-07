@@ -1,3 +1,5 @@
+export const dummyApiKey = 'dummy-api-key'
+
 export const dummyGetResponse = {
   data: [
     {
@@ -8,4 +10,8 @@ export const dummyGetResponse = {
   ],
 }
 
-export const dummyApiKey = 'dummy-api-key'
+export const dummyError = {
+  response: {
+    status: 500,
+  },
+}

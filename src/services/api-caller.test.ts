@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { krakenFlexApiBaseUrl, krakenFlexApiPaths } from '../constants'
-import { dummyApiKey, dummyGetResponse } from '../test-data'
+import { dummyApiKey, dummyError, dummyGetResponse } from '../test-data'
 import { getData } from './api-caller'
 import { errorLogger } from './logger'
 
@@ -36,23 +36,21 @@ describe('GIVEN a request to GET data from KrakenFlex`s API', () => {
   describe('WHEN the API responds with an error', () => {
     it('SHOULD throw an error AND write to the error logger', async () => {
       // Arrange
-      const mockError = { error: 'some error' }
-      mockedAxios.get.mockRejectedValue(mockError)
+      mockedAxios.get.mockRejectedValue(dummyError)
 
       // Act
-      let result
       try {
-        result = await getData(url, headers)
+        await getData(url, headers)
       } catch (error) {
         // Assert
-        expect(error).toEqual(mockError)
+        expect(error).toEqual(dummyError)
         expect(mockedErrorLogger).toHaveBeenCalledWith(
           `Failed to GET data from ${url}`,
-          mockError
+          dummyError
         )
         return
       }
-      expect(result).toEqual(`Function didn't throw`)
+      expect(`Function didn't throw`).toBeFalsy()
       // note that I added the above line and the return because the jest documentation (https://jestjs.io/docs/asynchronous#asyncawait) says to use this try/catch approach but I noticed that without a test to fail then this unit test will pass in the event of the function not throwing.
     })
   })
