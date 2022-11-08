@@ -1,6 +1,4 @@
 import {
-  addDeviceNamesToOutages,
-  createSiteDeviceIdNameDictionary,
   getAllOutages,
   getSiteInfo,
   postOutages,
@@ -8,10 +6,8 @@ import {
 import * as apiCallers from './services/api-caller'
 import { infoLogger } from './services/loggers'
 import {
-  dummyDictionary,
   dummyGetOutagesResponse,
   dummyGetSiteInfoResponse,
-  dummyOutage,
   dummySiteId,
 } from './test-data'
 
@@ -61,44 +57,6 @@ describe('GIVEN a request to get site data for a particualr site', () => {
         `successfully retrieved site info for siteId: ${dummySiteId}`
       )
     })
-  })
-})
-
-describe('GIVEN a request to create a site`s Devices ID x Name dictionary', () => {
-  it('THEN it should return a dictionary ', () => {
-    // Arrange
-    const devices = dummyGetSiteInfoResponse.data.devices
-    const expectedDictionary = {
-      [devices[0].id]: devices[0].name,
-    }
-
-    // Act
-    const dictionary = createSiteDeviceIdNameDictionary(devices)
-
-    // Assert
-    expect(dictionary).toEqual(expect.objectContaining(expectedDictionary))
-  })
-})
-
-describe('GIVEN a request to add device names to outages', () => {
-  it('THEN it should return an array of outages with names included', () => {
-    // Arrange
-    const expectedOutput = [
-      {
-        ...dummyOutage,
-        name: 'Partridge',
-      },
-    ]
-
-    // Act
-    const outagesWithNames = addDeviceNamesToOutages(
-      dummyGetOutagesResponse.data,
-      dummyDictionary
-    )
-
-    // Assert
-    expect(outagesWithNames).toEqual(expectedOutput)
-    expect(mockedInfoLogger).toBeCalledWith('added device name to outages')
   })
 })
 

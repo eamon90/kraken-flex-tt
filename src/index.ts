@@ -7,7 +7,12 @@ import {
 } from './constants'
 import { getData, postData } from './services/api-caller'
 import { errorLogger, infoLogger } from './services/loggers'
-import { Device, Outage, SiteDeviceIdNameDictionary, SiteInfo } from './types'
+import { Outage, SiteInfo } from './types'
+import {
+  createSiteDeviceIdNameDictionary,
+  filterOutages,
+  addDeviceNamesToOutages,
+} from './utils/utils'
 
 // named 'handler' to be consistent with AWS Lambda naming convention where this would handle an event or API call
 export const handler = async (siteId: string, outagesFrom: Date) => {
@@ -54,50 +59,6 @@ export const getSiteInfo = async (siteId: string): Promise<SiteInfo> => {
   infoLogger(`successfully retrieved site info for siteId: ${siteId}`)
 
   return siteInfo
-}
-
-export const createSiteDeviceIdNameDictionary = (
-  devices: Device[]
-): SiteDeviceIdNameDictionary => {
-  const dictionary = devices.reduce((prev, curr) => {
-    return Object.assign(prev, {
-      [curr.id]: curr.name,
-    })
-  }, {} as SiteDeviceIdNameDictionary)
-
-  return dictionary
-}
-
-export const filterOutages = (
-  outages: Outage[],
-  outagesFrom: Date,
-  dictionary: SiteDeviceIdNameDictionary
-): Outage[] => {
-  let filteredOutages = outages.filter(
-    (outage) =>
-      new Date(outage.begin) > outagesFrom &&
-      dictionary.hasOwnProperty(outage.id)
-  )
-
-  infoLogger(
-    'filtered all outages down to just those for the requested site and timeframe'
-  )
-
-  return filteredOutages
-}
-
-export const addDeviceNamesToOutages = (
-  outages: Outage[],
-  dictionary: SiteDeviceIdNameDictionary
-): Outage[] => {
-  const outagesWithDeviceName = outages.map((outage) => ({
-    ...outage,
-    name: dictionary[outage.id],
-  }))
-
-  infoLogger('added device name to outages')
-
-  return outagesWithDeviceName
 }
 
 export const postOutages = async (

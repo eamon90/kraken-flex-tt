@@ -4,6 +4,10 @@ export const errorLogger = (message: string, data: any) => {
 }
 
 export const infoLogger = (message: string, data?: any) => {
-  console.log(message, data)
+  if (data) {
+    console.log(message, data)
+  } else {
+    console.log(message)
+  }
   // as above
 }
