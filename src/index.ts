@@ -5,7 +5,7 @@ import {
 } from './constants'
 import { getData } from './services/api-caller'
 import { infoLogger } from './services/logger'
-import { Outage } from './types'
+import { Outage, SiteInfo } from './types'
 
 const headers = {
   'x-api-key': krakenFlexApiKey,
@@ -14,14 +14,29 @@ const headers = {
 // named 'handler' to be consistent with AWS Lambda naming convention where this would handle an event or API call
 export const handler = async () => {
   const allOutages = await getAllOutages()
+
+
+
 }
 
 export const getAllOutages = async (): Promise<Outage[]> => {
   infoLogger('getting all outages')
   const url = `${krakenFlexApiBaseUrl}${krakenFlexApiPaths.allOutages}`
   const outages = await getData(url, headers)
-  infoLogger('received all outages from KrakenFlex API') 
+  infoLogger('successfully retrieved all outages') 
+
   return outages
+}
+
+export const getSiteInfo = async (siteId: string): Promise<SiteInfo> => {
+  infoLogger(`getting site info for siteId: ${siteId}`)
+  const path = krakenFlexApiPaths.siteInfo.replace('{siteId}', `${siteId}`)
+  const url = `${krakenFlexApiBaseUrl}${path}`
+  const siteInfo = await getData(url, headers)
+  // I would consider caching siteInfo considering it's unlikely to change over short periods in order to improve perfomance and reduce unnecessary API calls
+  infoLogger(`successfully retrieved site info for siteId: ${siteId}`)
+
+  return siteInfo
 }
 
 handler()

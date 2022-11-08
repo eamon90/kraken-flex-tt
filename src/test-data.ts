@@ -1,6 +1,6 @@
 export const dummyApiKey = 'dummy-api-key'
 
-export const dummyGetResponse = {
+export const dummyGetOutagesResponse = {
   status: 200,
   statusText: 'OK',
   data: [
@@ -10,6 +10,23 @@ export const dummyGetResponse = {
       end: '2022-01-02T12:01:59.123Z',
     },
   ],
+}
+
+export const dummySiteId = 'pear-tree'
+
+export const dummyGetSiteInfoResponse = {
+  status: 200,
+  statusText: 'OK',
+  data: {
+    id: 'pear-tree',
+    name: 'Pear Tree',
+    devices: [
+      {
+        id: '44c02564-a229-4f51-8ded-cc7bcb202566',
+        name: 'Partridge',
+      },
+    ],
+  },
 }
 
 export const dummyError = {

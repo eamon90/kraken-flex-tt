@@ -1,3 +1,5 @@
+export const norwichPearTreeSiteId = 'norwich-pear-tree'
+
 export const krakenFlexApiBaseUrl =
   'https://api.krakenflex.systems/interview-tests-mock-api/v1/'
 // typically this would be variable depending on the environment

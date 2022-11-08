@@ -3,7 +3,7 @@ import { krakenFlexApiBaseUrl, krakenFlexApiPaths } from '../constants'
 import {
   dummyApiKey,
   dummyError,
-  dummyGetResponse,
+  dummyGetOutagesResponse,
   dummyPostRequestData,
   dummyPostResponse,
 } from '../test-data'
@@ -28,20 +28,20 @@ describe('API Caller', () => {
     const url = `${krakenFlexApiBaseUrl}${krakenFlexApiPaths.allOutages}`
 
     describe('WHEN the API responds with a 200 and some data', () => {
-      it('SHOULD make an API call AND return the requested data', async () => {
+      it('THEN it should make an API call AND return the requested data', async () => {
         // Arrange
-        mockedAxios.get.mockResolvedValue(dummyGetResponse)
+        mockedAxios.get.mockResolvedValue(dummyGetOutagesResponse)
 
         // Act
         const data = await getData(url, headers)
 
         // Assert
         expect(mockedAxios.get).toHaveBeenCalledWith(url, { headers })
-        expect(data).toEqual(dummyGetResponse.data)
+        expect(data).toEqual(dummyGetOutagesResponse.data)
       })
     })
     describe('WHEN the API responds with an error', () => {
-      it('SHOULD throw an error AND write to the error logger', async () => {
+      it('THEN it should throw an error AND write to the error logger', async () => {
         // Arrange
         mockedAxios.get.mockRejectedValue(dummyError)
 
@@ -65,7 +65,7 @@ describe('API Caller', () => {
   describe('GIVEN a request to POST data to an API', () => {
     const url = `${krakenFlexApiBaseUrl}${krakenFlexApiPaths.siteOutages}`
     describe('WHEN the API responds with a 200 and some data', () => {
-      it('SHOULD make an API call with the data passed into the function on the request body', async () => {
+      it('THEN it should make an API call with the data passed into the function on the request body', async () => {
         // Arrange
         mockedAxios.post.mockResolvedValue(dummyPostResponse)
 
@@ -81,7 +81,7 @@ describe('API Caller', () => {
       })
     })
     describe('WHEN the API responds with an error', () => {
-      it('SHOULD throw an error AND write to the error logger', async () => {
+      it('THEN it should throw an error AND write to the error logger', async () => {
         // Arrange
         mockedAxios.post.mockRejectedValue(dummyError)
 
