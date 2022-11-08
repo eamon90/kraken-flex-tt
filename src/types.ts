@@ -17,5 +17,5 @@ export interface Device {
 }
 
 export interface SiteDeviceIdNameDictionary {
-  [id: string]: [name: string]
+  [id: string]: string
 }

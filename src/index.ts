@@ -1,4 +1,5 @@
 import {
+  headers,
   krakenFlexApiBaseUrl,
   krakenFlexApiKey,
   krakenFlexApiPaths,
@@ -9,23 +10,28 @@ import { getData } from './services/api-caller'
 import { infoLogger } from './services/loggers'
 import { Device, Outage, SiteDeviceIdNameDictionary, SiteInfo } from './types'
 
-const headers = {
-  'x-api-key': krakenFlexApiKey,
-}
-
 // named 'handler' to be consistent with AWS Lambda naming convention where this would handle an event or API call
 export const handler = async (siteId: string, outagesFrom: Date) => {
   const allOutages = await getAllOutages()
+
   const siteInfo = await getSiteInfo(siteId)
+
   const siteDeviceIdNameDictionary = createSiteDeviceIdNameDictionary(
     siteInfo.devices
   )
 
-  const filteredOutages = filterOutages(
+  let filteredOutages = filterOutages(
     allOutages,
     outagesFrom,
     siteDeviceIdNameDictionary
   )
+
+  filteredOutages = addDeviceNamesToOutages(
+    filteredOutages,
+    siteDeviceIdNameDictionary
+  )
+
+  await postOutages(filteredOutages)
 }
 
 export const getAllOutages = async (): Promise<Outage[]> => {
@@ -75,11 +81,27 @@ export const filterOutages = (
   return filteredOutages
 }
 
+export const addDeviceNamesToOutages = (
+  outages: Outage[],
+  dictionary: SiteDeviceIdNameDictionary
+): Outage[] => {
+  const outagesWithDeviceName = outages.map((outage) => ({
+    ...outage,
+    name: dictionary[outage.id],
+  }))
+  infoLogger('added device name to outages')
+  return outagesWithDeviceName
+}
+
+export const postOutages = async (outages: Outage[]): Promise<void> => {
+
+}
+
 // The siteId and outagesFrom params could be variable and passed in as a property on an Event or param on an API request
 handler(norwichPearTreeSiteId, outagesFrom)
   .then(() => {
-    console.log('Successfully got and posted outages')
+    console.log('successfully got and posted outages')
   })
   .catch((error) => {
-    console.error('Failed to get and post outages', error)
+    console.error('failed to get and post outages', error)
   })
