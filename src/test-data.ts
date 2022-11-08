@@ -1,6 +1,8 @@
 export const dummyApiKey = 'dummy-api-key'
 
 export const dummyGetResponse = {
+  status: 200,
+  statusText: 'OK',
   data: [
     {
       id: '44c02564-a229-4f51-8ded-cc7bcb202566',
@@ -11,7 +13,22 @@ export const dummyGetResponse = {
 }
 
 export const dummyError = {
+  message: 'Request failed with status code 403',
   response: {
-    status: 500,
+    status: 403,
   },
+}
+
+export const dummyPostRequestData = [
+  {
+    id: '44c02564-a229-4f51-8ded-cc7bcb202566',
+    name: 'Partridge',
+    begin: '2022-01-01T00:00:00.000Z',
+    end: '2022-01-02T12:01:59.123Z',
+  },
+]
+
+export const dummyPostResponse = {
+  status: 200,
+  statusText: 'OK',
 }

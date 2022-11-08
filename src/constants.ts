@@ -6,5 +6,5 @@ export const krakenFlexApiKey = 'EltgJ5G8m44IzwE6UN2Y4B4NjPW77Zk6FJK3lL23' // th
 export const krakenFlexApiPaths = {
   allOutages: 'outages',
   siteInfo: 'site-info/{siteId}',
-  siteOutages: '/site-outages/{siteId}',
+  siteOutages: 'site-outages/{siteId}',
 }

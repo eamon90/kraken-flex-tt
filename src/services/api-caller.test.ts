@@ -1,7 +1,13 @@
 import axios from 'axios'
 import { krakenFlexApiBaseUrl, krakenFlexApiPaths } from '../constants'
-import { dummyApiKey, dummyError, dummyGetResponse } from '../test-data'
-import { getData } from './api-caller'
+import {
+  dummyApiKey,
+  dummyError,
+  dummyGetResponse,
+  dummyPostRequestData,
+  dummyPostResponse,
+} from '../test-data'
+import { getData, postData } from './api-caller'
 import { errorLogger } from './logger'
 
 jest.mock('axios')
@@ -14,44 +20,85 @@ const headers = {
   'x-api-key': dummyApiKey,
 }
 
-describe('GIVEN a request to GET data from KrakenFlex`s API', () => {
+describe('API Caller', () => {
   beforeEach(() => {
     jest.resetAllMocks()
   })
-  const url = `${krakenFlexApiBaseUrl}${krakenFlexApiPaths.allOutages}`
+  describe('GIVEN a request to GET data from an API', () => {
+    const url = `${krakenFlexApiBaseUrl}${krakenFlexApiPaths.allOutages}`
 
-  describe('WHEN the API responds with a 200 and some data', () => {
-    it('SHOULD make an API call AND return the requested data', async () => {
-      // Arrange
-      mockedAxios.get.mockResolvedValue(dummyGetResponse)
+    describe('WHEN the API responds with a 200 and some data', () => {
+      it('SHOULD make an API call AND return the requested data', async () => {
+        // Arrange
+        mockedAxios.get.mockResolvedValue(dummyGetResponse)
 
-      // Act
-      const data = await getData(url, headers)
+        // Act
+        const data = await getData(url, headers)
 
-      // Assert
-      expect(mockedAxios.get).toHaveBeenCalledWith(url, { headers })
-      expect(data).toEqual(dummyGetResponse.data)
+        // Assert
+        expect(mockedAxios.get).toHaveBeenCalledWith(url, { headers })
+        expect(data).toEqual(dummyGetResponse.data)
+      })
+    })
+    describe('WHEN the API responds with an error', () => {
+      it('SHOULD throw an error AND write to the error logger', async () => {
+        // Arrange
+        mockedAxios.get.mockRejectedValue(dummyError)
+
+        // Act
+        try {
+          await getData(url, headers)
+        } catch (error) {
+          // Assert
+          expect(error).toEqual(dummyError)
+          expect(mockedErrorLogger).toHaveBeenCalledWith(
+            `Failed to GET data from ${url}`,
+            dummyError
+          )
+          return
+        }
+        expect(`Function didn't throw`).toBeFalsy()
+        // note that I added the above line and the return because the jest documentation (https://jestjs.io/docs/asynchronous#asyncawait) says to use this try/catch approach but I noticed that without a test to fail then this unit test will pass in the event of the function not throwing.
+      })
     })
   })
-  describe('WHEN the API responds with an error', () => {
-    it('SHOULD throw an error AND write to the error logger', async () => {
-      // Arrange
-      mockedAxios.get.mockRejectedValue(dummyError)
+  describe('GIVEN a request to POST data to an API', () => {
+    const url = `${krakenFlexApiBaseUrl}${krakenFlexApiPaths.siteOutages}`
+    describe('WHEN the API responds with a 200 and some data', () => {
+      it('SHOULD make an API call with the data passed into the function on the request body', async () => {
+        // Arrange
+        mockedAxios.post.mockResolvedValue(dummyPostResponse)
 
-      // Act
-      try {
-        await getData(url, headers)
-      } catch (error) {
+        // Act
+        await postData(url, dummyPostRequestData, headers)
+
         // Assert
-        expect(error).toEqual(dummyError)
-        expect(mockedErrorLogger).toHaveBeenCalledWith(
-          `Failed to GET data from ${url}`,
-          dummyError
+        expect(mockedAxios.post).toHaveBeenCalledWith(
+          url,
+          dummyPostRequestData,
+          { headers }
         )
-        return
-      }
-      expect(`Function didn't throw`).toBeFalsy()
-      // note that I added the above line and the return because the jest documentation (https://jestjs.io/docs/asynchronous#asyncawait) says to use this try/catch approach but I noticed that without a test to fail then this unit test will pass in the event of the function not throwing.
+      })
+    })
+    describe('WHEN the API responds with an error', () => {
+      it('SHOULD throw an error AND write to the error logger', async () => {
+        // Arrange
+        mockedAxios.post.mockRejectedValue(dummyError)
+
+        // Act
+        try {
+          await postData(url, dummyPostRequestData, headers)
+        } catch (error) {
+          // Assert
+          expect(error).toEqual(dummyError)
+          expect(mockedErrorLogger).toHaveBeenCalledWith(
+            `Failed to POST data to ${url}`,
+            dummyError
+          )
+          return
+        }
+        expect(`Function didn't throw`).toBeFalsy()
+      })
     })
   })
 })
