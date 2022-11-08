@@ -1,13 +1,12 @@
 import {
   headers,
   krakenFlexApiBaseUrl,
-  krakenFlexApiKey,
   krakenFlexApiPaths,
   norwichPearTreeSiteId,
   outagesFrom,
 } from './constants'
-import { getData } from './services/api-caller'
-import { infoLogger } from './services/loggers'
+import { getData, postData } from './services/api-caller'
+import { errorLogger, infoLogger } from './services/loggers'
 import { Device, Outage, SiteDeviceIdNameDictionary, SiteInfo } from './types'
 
 // named 'handler' to be consistent with AWS Lambda naming convention where this would handle an event or API call
@@ -31,11 +30,12 @@ export const handler = async (siteId: string, outagesFrom: Date) => {
     siteDeviceIdNameDictionary
   )
 
-  await postOutages(filteredOutages)
+  await postOutages(siteId, filteredOutages)
 }
 
 export const getAllOutages = async (): Promise<Outage[]> => {
   infoLogger('getting all outages')
+
   const url = `${krakenFlexApiBaseUrl}${krakenFlexApiPaths.allOutages}`
   const outages = await getData(url, headers)
   infoLogger('successfully retrieved all outages')
@@ -45,10 +45,12 @@ export const getAllOutages = async (): Promise<Outage[]> => {
 
 export const getSiteInfo = async (siteId: string): Promise<SiteInfo> => {
   infoLogger(`getting site info for siteId: ${siteId}`)
+
   const path = krakenFlexApiPaths.siteInfo.replace('{siteId}', `${siteId}`)
   const url = `${krakenFlexApiBaseUrl}${path}`
   const siteInfo = await getData(url, headers)
   // I would consider caching siteInfo for a set period in order to improve perfomance and reduce unnecessary API calls as it's unlikely to change over short periods
+
   infoLogger(`successfully retrieved site info for siteId: ${siteId}`)
 
   return siteInfo
@@ -62,6 +64,7 @@ export const createSiteDeviceIdNameDictionary = (
       [curr.id]: curr.name,
     })
   }, {} as SiteDeviceIdNameDictionary)
+
   return dictionary
 }
 
@@ -75,9 +78,11 @@ export const filterOutages = (
       new Date(outage.begin) > outagesFrom &&
       dictionary.hasOwnProperty(outage.id)
   )
+
   infoLogger(
     'filtered all outages down to just those for the requested site and timeframe'
   )
+
   return filteredOutages
 }
 
@@ -89,19 +94,30 @@ export const addDeviceNamesToOutages = (
     ...outage,
     name: dictionary[outage.id],
   }))
+
   infoLogger('added device name to outages')
+
   return outagesWithDeviceName
 }
 
-export const postOutages = async (outages: Outage[]): Promise<void> => {
+export const postOutages = async (
+  siteId: string,
+  outages: Outage[]
+): Promise<void> => {
+  infoLogger(`posting outages for siteId: ${siteId}`)
 
+  const path = krakenFlexApiPaths.siteOutages.replace('{siteId}', `${siteId}`)
+  const url = `${krakenFlexApiBaseUrl}${path}`
+  await postData(url, outages, headers)
+
+  infoLogger(`successfully posted outages for siteId: ${siteId}`)
 }
 
 // The siteId and outagesFrom params could be variable and passed in as a property on an Event or param on an API request
 handler(norwichPearTreeSiteId, outagesFrom)
   .then(() => {
-    console.log('successfully got and posted outages')
+    infoLogger('successfully got and posted outages')
   })
   .catch((error) => {
-    console.error('failed to get and post outages', error)
+    errorLogger('failed to get and post outages', error)
   })

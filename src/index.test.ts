@@ -3,6 +3,7 @@ import {
   createSiteDeviceIdNameDictionary,
   getAllOutages,
   getSiteInfo,
+  postOutages,
 } from '.'
 import * as apiCallers from './services/api-caller'
 import { infoLogger } from './services/loggers'
@@ -36,7 +37,7 @@ describe('GIVEN a request get all outages', () => {
       expect(outages).toEqual(dummyGetOutagesResponse.data)
       expect(mockedInfoLogger).toBeCalledWith('getting all outages')
       expect(mockedInfoLogger).toBeCalledWith(
-        'received all outages from KrakenFlex API'
+        'successfully retrieved all outages'
       )
     })
   })
@@ -76,9 +77,6 @@ describe('GIVEN a request to create a site`s Devices ID x Name dictionary', () =
 
     // Assert
     expect(dictionary).toEqual(expect.objectContaining(expectedDictionary))
-    expect(mockedInfoLogger).toBeCalledWith(
-      'filtered all outages down to just those for the requested site and timeframe'
-    )
   })
 })
 
@@ -101,5 +99,28 @@ describe('GIVEN a request to add device names to outages', () => {
     // Assert
     expect(outagesWithNames).toEqual(expectedOutput)
     expect(mockedInfoLogger).toBeCalledWith('added device name to outages')
+  })
+})
+
+describe('GIVEN a request post outages', () => {
+  beforeEach(() => {
+    jest.resetAllMocks()
+  })
+  describe('WHEN the api caller accepts the request (no error)', () => {
+    it('THEN it should call the relevant loggers', async () => {
+      // Arrange
+      mockedApiCallers.postData.mockResolvedValue()
+
+      // Act
+      await postOutages(dummySiteId, dummyGetOutagesResponse.data)
+
+      // Assert
+      expect(mockedInfoLogger).toBeCalledWith(
+        `posting outages for siteId: ${dummySiteId}`
+      )
+      expect(mockedInfoLogger).toBeCalledWith(
+        `successfully posted outages for siteId: ${dummySiteId}`
+      )
+    })
   })
 })
