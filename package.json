@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "handler": "npx ts-node src/index.ts",
     "test": "jest"
   },
   "repository": {
