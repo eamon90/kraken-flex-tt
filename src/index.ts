@@ -16,6 +16,7 @@ import {
 
 // named 'handler' to be consistent with AWS Lambda naming convention where this would handle an event or API call
 export const handler = async (siteId: string, outagesFrom: Date) => {
+  infoLogger('start:')
   const allOutages = await getAllOutages()
 
   const siteInfo = await getSiteInfo(siteId)
@@ -77,8 +78,8 @@ export const postOutages = async (
 // The siteId and outagesFrom params could be variable and passed in as a property on an Event or param on an API request
 handler(norwichPearTreeSiteId, outagesFrom)
   .then(() => {
-    infoLogger('successfully got and posted outages')
+    infoLogger('end: successfully got and posted outages')
   })
   .catch((error) => {
-    errorLogger('failed to get and post outages', error)
+    errorLogger('error: failed to get and post outages', error)
   })

@@ -43,10 +43,10 @@ describe('GIVEN a request to filter outages', () => {
     // Assert
     filteredOutages.map((outage) => {
       expect(dummyDictionary.hasOwnProperty(outage.id))
-      
+
       const outageBeginTimestamp = Date.parse(outage.begin)
       const fromTimestamp = dummyOutagesFrom.getTime()
-      expect(outageBeginTimestamp).toBeGreaterThan(fromTimestamp - 1)
+      expect(outageBeginTimestamp).toBeGreaterThanOrEqual(fromTimestamp)
     })
   })
 })
