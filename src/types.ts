@@ -15,3 +15,7 @@ export interface Device {
   id: string
   name: string
 }
+
+export interface SiteDeviceIdNameDictionary {
+  [id: string]: [name: string]
+}

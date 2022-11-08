@@ -1,13 +1,13 @@
-import { getAllOutages, getSiteInfo } from '.'
+import { createSiteDeviceIdNameDictionary, getAllOutages, getSiteInfo } from '.'
 import * as apiCallers from './services/api-caller'
-import { infoLogger } from './services/logger'
+import { infoLogger } from './services/loggers'
 import {
   dummyGetOutagesResponse,
   dummyGetSiteInfoResponse,
   dummySiteId,
 } from './test-data'
 
-jest.mock('./services/logger')
+jest.mock('./services/loggers')
 const mockedInfoLogger = infoLogger as jest.Mocked<typeof infoLogger>
 
 jest.mock('./services/api-caller')
@@ -53,5 +53,24 @@ describe('GIVEN a request to get site data for a particualr site', () => {
         `successfully retrieved site info for siteId: ${dummySiteId}`
       )
     })
+  })
+})
+
+describe('GIVEN a request to create a site`s Devices ID x Name dictionary', () => {
+  it('THEN it should return a dictionary ', () => {
+    // Arrange
+    const devices = dummyGetSiteInfoResponse.data.devices
+    const expectedDictionary = {
+      [devices[0].id]: devices[0].name,
+    }
+
+    // Act
+    const dictionary = createSiteDeviceIdNameDictionary(devices)
+
+    // Assert
+    expect(dictionary).toEqual(expect.objectContaining(expectedDictionary))
+    expect(mockedInfoLogger).toBeCalledWith(
+      'filtered all outages down to just those for the requested site and timeframe'
+    )
   })
 })

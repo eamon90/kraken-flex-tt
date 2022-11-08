@@ -1,6 +1,6 @@
 import axios from 'axios'
 import axiosRetry from 'axios-retry'
-import { errorLogger } from './logger'
+import { errorLogger } from './loggers'
 
 axiosRetry(axios, {
   retries: 3,

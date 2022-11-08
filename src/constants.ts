@@ -1,5 +1,7 @@
 export const norwichPearTreeSiteId = 'norwich-pear-tree'
 
+export const outagesFrom = new Date('2022-01-01T00:00:00.000Z')
+
 export const krakenFlexApiBaseUrl =
   'https://api.krakenflex.systems/interview-tests-mock-api/v1/'
 // typically this would be variable depending on the environment

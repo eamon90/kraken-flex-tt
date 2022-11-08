@@ -8,12 +8,12 @@ import {
   dummyPostResponse,
 } from '../test-data'
 import { getData, postData } from './api-caller'
-import { errorLogger } from './logger'
+import { errorLogger } from './loggers'
 
 jest.mock('axios')
 const mockedAxios = axios as jest.Mocked<typeof axios>
 
-jest.mock('./logger')
+jest.mock('./loggers')
 const mockedErrorLogger = errorLogger as jest.Mocked<typeof errorLogger>
 
 const headers = {
