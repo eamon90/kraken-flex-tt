@@ -9,7 +9,7 @@ axiosRetry(axios, {
   },
   retryCondition: (error) => error?.response?.status === 500,
 })
-// I found this axios plugin and I believe I've succesfully configured it to retry up to three times every two seconds after any 500 responses. I've been unable to determine how to test this, which I would certainly do given more time to dedicate to it.
+// I found this axios plugin and I believe I've succesfully configured it to retry up to three times every two seconds in the event of a 500 response. I've been unable to determine how to test this, which I would certainly do given more time to dedicate to it.
 
 export const getData = async (url: string, headers: any) => {
   try {

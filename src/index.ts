@@ -18,7 +18,6 @@ import {
 export const handler = async (siteId: string, outagesFrom: Date) => {
   infoLogger('start:')
   const allOutages = await getAllOutages()
-
   const siteInfo = await getSiteInfo(siteId)
 
   const siteDeviceIdNameDictionary = createSiteDeviceIdNameDictionary(

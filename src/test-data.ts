@@ -39,6 +39,10 @@ export const dummyGetSiteInfoResponse = {
         id: '44c02564-a229-4f51-8ded-cc7bcb202566',
         name: 'Partridge',
       },
+      {
+        id: '27820d4a-1bc4-4fc1-a5f0-bcb3627e94a1',
+        name: 'Brent',
+      },
     ],
   },
 }
